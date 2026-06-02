@@ -44,7 +44,7 @@ bio: "I build full stack, database-driven, and business-focused applications usi
     description: "Building AI-powered applications using NLP, computer vision, semantic search, and automation workflows.",
     skills: ["ChatGPT API", "Hugging Face", "Google Vision API", "Python"]
   }
-]
+],
 technicalSkills: {
   "Languages": ["JavaScript", "TypeScript", "Python", "C++", "SQL"],
   "Frameworks": ["React", "React Native", "Node.js", "Express.js", "Bootstrap", "Spring Boot Basic"],
@@ -86,7 +86,7 @@ projects: [
     featured: true,
     highlights: ["Gesture control", "Virtual mouse", "Computer vision", "Presentation control"]
   },
-  
+
   {
   title: "Portfolio Website",
   category: "Personal Portfolio",
@@ -102,7 +102,7 @@ projects: [
     "GitHub integration",
     "Resume download"
   ]
-}
+},
   {
     title: "PropConnect LK",
     category: "Web Platform",
