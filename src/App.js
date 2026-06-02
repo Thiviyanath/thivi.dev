@@ -402,10 +402,14 @@ function Hero() {
                 View My Work
                 <ArrowUpRight size={18} />
               </button>
-              <a href={CONFIG.resumeLink} className="btn btn-secondary">
-                <Download size={18} />
-                Download Resume
-              </a>
+              <a
+                   href="/thivi.dev/Thiviyanath_Maheswaran_SE_Intern_CV.pdf"
+                   download
+                   className="btn-secondary"
+                 >
+                       <Download size={20} />
+                       Download Resume
+                     </a>
             </motion.div>
 
             <motion.div
