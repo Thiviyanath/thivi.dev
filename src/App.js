@@ -23,33 +23,28 @@ bio: "I build full stack, database-driven, and business-focused applications usi
     github: "https://github.com/Thiviyanath"
   },
   
-  expertise: [
-    {
-      icon: Code2,
-      title: "Frontend Development",
-      description: "Building responsive, performant web applications with modern frameworks and best practices.",
-      skills: ["React", "JavaScript ES6+", "HTML5/CSS3", "Responsive Design"]
-    },
-    {
-      icon: Database,
-      title: "Backend & Database",
-      description: "Designing scalable backend systems and efficient database architectures.",
-      skills: ["Java", "Python", "MySQL", "REST APIs"]
-    },
-    {
-      icon: Smartphone,
-      title: "Mobile Development",
-      description: "Creating native Android applications with smooth UX and clean architecture.",
-      skills: ["Android Studio", "Java", "XML Layouts", "Material Design"]
-    },
-    {
-      icon: Palette,
-      title: "UI/UX Design",
-      description: "Designing intuitive interfaces with strong visual hierarchy and user-centered thinking.",
-      skills: ["Figma", "Canva", "Prototyping", "Design Systems"]
-    }
-  ],
-  
+ expertise: [
+  {
+    title: "Full Stack Development",
+    description: "Building scalable full stack web applications with responsive frontend interfaces, backend APIs, and database integration.",
+    skills: ["React", "Node.js", "Express.js", "MongoDB"]
+  },
+  {
+    title: "Business Applications",
+    description: "Developing workflow-based business systems including ERP platforms, admin dashboards, reporting systems, and CRUD operations.",
+    skills: ["Odoo ERP", "PostgreSQL", "REST APIs", "Dashboard Systems"]
+  },
+  {
+    title: "Database & Backend Systems",
+    description: "Designing backend architectures, structured databases, authentication systems, and API-driven applications.",
+    skills: ["MongoDB", "Firebase", "SQL", "Authentication"]
+  },
+  {
+    title: "AI & Automation",
+    description: "Building AI-powered applications using NLP, computer vision, semantic search, and automation workflows.",
+    skills: ["ChatGPT API", "Hugging Face", "Google Vision API", "Python"]
+  }
+]
 technicalSkills: {
   "Languages": ["JavaScript", "TypeScript", "Python", "C++", "SQL"],
   "Frameworks": ["React", "React Native", "Node.js", "Express.js", "Bootstrap", "Spring Boot Basic"],
@@ -64,7 +59,7 @@ projects: [
     description: "Business ERP solution for inventory tracking, sales management, invoicing, tax-based workflows, reporting, and dashboard management.",
     longDescription: "Developed an Odoo ERP-based business management system focused on structured business workflows, sales records, tax calculations, reporting, and dashboard-based operations.",
     tech: ["Odoo ERP", "PostgreSQL", "Python", "Business Workflows"],
-    github: "#",
+    github: "https://github.com/Thiviyanath/business-erp-system",
     live: null,
     featured: true,
     highlights: ["Inventory tracking", "Sales management", "Tax workflows", "Reporting dashboard"]
@@ -91,6 +86,23 @@ projects: [
     featured: true,
     highlights: ["Gesture control", "Virtual mouse", "Computer vision", "Presentation control"]
   },
+  
+  {
+  title: "Portfolio Website",
+  category: "Personal Portfolio",
+  description: "Professional developer portfolio showcasing projects, technical skills, certifications, and achievements.",
+  longDescription: "Designed and developed a responsive personal portfolio website using React to showcase software engineering projects, technical expertise, certifications, and professional achievements. Features modern UI/UX design, project filtering, GitHub integration, and responsive layouts.",
+  tech: ["React", "JavaScript", "CSS3", "GitHub Pages"],
+  github: "https://github.com/Thiviyanath/thivi.dev",
+  live: "https://thiviyanath.github.io/thivi.dev/",
+  featured: false,
+  highlights: [
+    "Responsive design",
+    "Project showcase",
+    "GitHub integration",
+    "Resume download"
+  ]
+}
   {
     title: "PropConnect LK",
     category: "Web Platform",
