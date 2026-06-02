@@ -1,7 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
-import { Github, Linkedin, Mail, ExternalLink, Menu, X, Code2, Palette, Smartphone, Database, Globe, Award, Download, ArrowUpRight, Star } from 'lucide-react';
-import profileImage from './assets/Profile.jpg'; 
+import { motion, useScroll, useSpring, useInView } from 'framer-motion';
+import {
+  Github,
+  Linkedin,
+  Mail,
+  ExternalLink,
+  Menu,
+  X,
+  Code2,
+  Palette,
+  Globe,
+  Award,
+  Download,
+  ArrowUpRight,
+  Star
+} from 'lucide-react';
+import profileImage from './assets/Profile.jpg';
+
 
 // ==========================================
 // ENHANCED PORTFOLIO CONFIGURATION
@@ -23,28 +38,33 @@ bio: "I build full stack, database-driven, and business-focused applications usi
     github: "https://github.com/Thiviyanath"
   },
   
- expertise: [
+expertise: [
   {
+    icon: Code2,
     title: "Full Stack Development",
     description: "Building scalable full stack web applications with responsive frontend interfaces, backend APIs, and database integration.",
     skills: ["React", "Node.js", "Express.js", "MongoDB"]
   },
   {
+    icon: Globe,
     title: "Business Applications",
     description: "Developing workflow-based business systems including ERP platforms, admin dashboards, reporting systems, and CRUD operations.",
     skills: ["Odoo ERP", "PostgreSQL", "REST APIs", "Dashboard Systems"]
   },
   {
+    icon: Award,
     title: "Database & Backend Systems",
     description: "Designing backend architectures, structured databases, authentication systems, and API-driven applications.",
     skills: ["MongoDB", "Firebase", "SQL", "Authentication"]
   },
   {
+    icon: Palette,
     title: "AI & Automation",
     description: "Building AI-powered applications using NLP, computer vision, semantic search, and automation workflows.",
     skills: ["ChatGPT API", "Hugging Face", "Google Vision API", "Python"]
   }
 ],
+
 technicalSkills: {
   "Languages": ["JavaScript", "TypeScript", "Python", "C++", "SQL"],
   "Frameworks": ["React", "React Native", "Node.js", "Express.js", "Bootstrap", "Spring Boot Basic"],
@@ -59,8 +79,8 @@ projects: [
     description: "Business ERP solution for inventory tracking, sales management, invoicing, tax-based workflows, reporting, and dashboard management.",
     longDescription: "Developed an Odoo ERP-based business management system focused on structured business workflows, sales records, tax calculations, reporting, and dashboard-based operations.",
     tech: ["Odoo ERP", "PostgreSQL", "Python", "Business Workflows"],
-    github: "https://github.com/Thiviyanath/business-erp-system",
-    live: null,
+    github: "https://github.com/Thiviyanath/business-erp-system-odoo",
+    live: "#",
     featured: true,
     highlights: ["Inventory tracking", "Sales management", "Tax workflows", "Reporting dashboard"]
   },
@@ -71,7 +91,7 @@ projects: [
     longDescription: "Developing a studio management platform for Ambience Studio, Colombo, with booking workflows, customer records, authentication, and admin dashboard features.",
     tech: ["Node.js", "Express.js", "MongoDB", "Bootstrap"],
     github: "#",
-    live: null,
+    live: "#",
     featured: true,
     highlights: ["Booking workflow", "Customer management", "Authentication", "Admin dashboard"]
   },
@@ -82,16 +102,16 @@ projects: [
     longDescription: "Developed an AI-powered gesture control system using Python, OpenCV, MediaPipe, and PyQt5 to enable hands-free desktop control through real-time hand tracking.",
     tech: ["Python", "OpenCV", "MediaPipe", "PyQt5"],
     github: "#",
-    live: null,
+    live: "#",
     featured: true,
     highlights: ["Gesture control", "Virtual mouse", "Computer vision", "Presentation control"]
   },
 
-  {
+{
   title: "Portfolio Website",
   category: "Personal Portfolio",
   description: "Professional developer portfolio showcasing projects, technical skills, certifications, and achievements.",
-  longDescription: "Designed and developed a responsive personal portfolio website using React to showcase software engineering projects, technical expertise, certifications, and professional achievements. Features modern UI/UX design, project filtering, GitHub integration, and responsive layouts.",
+  longDescription: "Designed and developed a responsive personal portfolio website using React showcasing projects, technical skills, certifications, and achievements.",
   tech: ["React", "JavaScript", "CSS3", "GitHub Pages"],
   github: "https://github.com/Thiviyanath/thivi.dev",
   live: "https://thiviyanath.github.io/thivi.dev/",
@@ -121,7 +141,7 @@ projects: [
     longDescription: "Built an AI-powered note management application using Google Vision API and NLP-based processing for note extraction, search, and organization.",
     tech: ["React Native", "Flask", "Google Vision API", "Hugging Face"],
     github: "#",
-    live: null,
+    live: "#",
     featured: false,
     highlights: ["Semantic search", "OCR extraction", "AI APIs", "NLP processing"]
   }
@@ -538,7 +558,7 @@ function Expertise() {
           
           <div className="expertise-grid">
             {CONFIG.expertise.map((item, index) => {
-              const Icon = item.icon;
+              const Icon = item.icon || Code2;
               return (
                 <motion.div
                   key={item.title}
@@ -796,7 +816,7 @@ function Achievements() {
           <h3 className="achievements-title">Achievements & Recognition</h3>
           <div className="achievements-grid">
             {CONFIG.achievements.map((achievement, index) => {
-              const Icon = achievement.icon;
+              const Icon = achievement.icon || Star;
               return (
                 <motion.div
                   key={index}
