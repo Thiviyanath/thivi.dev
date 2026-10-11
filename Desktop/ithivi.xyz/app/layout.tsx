@@ -1,5 +1,4 @@
 import './globals.css';
-import { Navbar } from './components/Navbar';
 
 export const metadata = {
   title: 'Thiviyanath M. | Software Engineer & Full Stack Developer',
@@ -14,8 +13,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-black text-white">
       <body className="font-mono bg-black text-white selection:bg-emerald-500 selection:text-black">
-        <Navbar />
-        <main className="pt-24">{children}</main>
+        <main>{children}</main>
       </body>
     </html>
   );

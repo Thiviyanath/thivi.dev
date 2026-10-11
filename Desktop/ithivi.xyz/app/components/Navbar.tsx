@@ -6,8 +6,8 @@ import { sound } from '../utils/sound';
 
 const NAV_ITEMS = [
   { id: 'hero', number: '01', label: 'HERO' },
-  { id: 'stack', number: '02', label: 'STACK' },
-  { id: 'experience', number: '03', label: 'EXPERIENCE' },
+  { id: 'about', number: '02', label: 'ABOUT' },
+  { id: 'stack', number: '03', label: 'STACK' },
   { id: 'projects', number: '04', label: 'INTERACTIVE LAB' },
 ];
 

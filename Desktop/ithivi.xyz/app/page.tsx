@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Lenis from 'lenis';
+import { 
+  Scan, FastForward, Mail, Phone, MapPin, 
+  ExternalLink, User, Globe, Code2, ShieldCheck, Terminal 
+} from 'lucide-react';
 import ThreeBackground from './components/ThreeBackground';
 import CustomCursor from './components/CustomCursor';
 import { Navbar } from './components/Navbar';
-import { BootLoader } from './components/BootLoader';
 import { InteractiveCLI } from './components/InteractiveCLI';
 import { PeriodicElement } from './components/PeriodicElement';
 import { AIPatchSimulator } from './components/AIPatchSimulator';
@@ -14,6 +17,19 @@ import { GestureSimulator } from './components/GestureSimulator';
 import { NextSectionWormhole } from './components/NextSectionWormhole';
 import { SystemTelemetryHUD } from './components/SystemTelemetryHUD';
 import { sound } from './utils/sound';
+
+// Native SVG Logomarks
+const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+  </svg>
+);
+
+const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.72a1.63 1.63 0 1 0 0 3.26 1.63 1.63 0 0 0 0-3.26z" />
+  </svg>
+);
 
 const TECH_CATEGORIES = ['ALL', 'LANGUAGES', 'FRAMEWORKS', 'DEVOPS & CLOUD', 'DATABASES & AI'];
 
@@ -32,6 +48,135 @@ const TECH_STACK = [
   { symbol: 'Tf', name: 'TensorFlow', num: 12, cat: 'DATABASES & AI', purity: '88.0%', desc: 'CNN Deep Learning Classifiers' }
 ];
 
+const PROFILE_DATA = {
+  name: "Thiviyanath Maheswaran",
+  title: "Software Engineer & AI Security Specialist",
+  location: "Kalubowila, Colombo, Sri Lanka",
+  status: "Seeking Software Engineering Internships",
+  bio: "Undergraduate Software Engineer specializing in DevSecOps, Cloud Infrastructure, and Deep Learning Vision. Experienced in building static code analysis engines (AST), containerized microservice architectures, and interactive computer vision tools.",
+  github: "https://github.com/Thiviyanath",
+  linkedin: "https://linkedin.com/in/thiviyanath-m",
+  email: "thiviyanath15@gmail.com",
+  phone: "+94 077-064-9966",
+  website: "https://ithivi.xyz"
+};
+
+// ============================================================================
+// BIOMETRIC PROFILE BOOT INTRO OVERLAY
+// ============================================================================
+function BiometricBootLoader({ onComplete }: { onComplete: () => void }) {
+  const [step, setStep] = useState(0);
+  const [progress, setProgress] = useState(0);
+
+  const bootLogs = [
+    'INITIALIZING ITHIVI.OS KERNEL v3.0...',
+    'CONNECTING CLOUD SECURITY MODULES...',
+    'LOADING AST SECURITY ENGINE...',
+    'PERFORMING BIOMETRIC PROFILE SCAN...',
+    'VERIFYING SECURITY CREDENTIALS... MATCHED [100%]',
+    'ESTABLISHING SECURE INTERACTION WORKBENCH...'
+  ];
+
+  useEffect(() => {
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 2;
+      });
+    }, 40);
+
+    const stepInterval = setInterval(() => {
+      setStep((prev) => {
+        if (prev >= bootLogs.length - 1) {
+          clearInterval(stepInterval);
+          setTimeout(onComplete, 800);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 550);
+
+    return () => {
+      clearInterval(progressInterval);
+      clearInterval(stepInterval);
+    };
+  }, [onComplete]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ duration: 0.6 }}
+      className="fixed inset-0 z-[100] bg-[#030712] flex flex-col items-center justify-center font-mono text-xs selection:bg-emerald-500 selection:text-black"
+    >
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/10 via-transparent to-black" />
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px]" />
+
+      <button
+        onClick={onComplete}
+        className="absolute top-8 right-8 flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 border border-slate-700 text-slate-300 rounded-lg hover:text-emerald-400 hover:border-emerald-500/50 transition z-50"
+      >
+        <FastForward className="w-3.5 h-3.5" /> SKIP_INTRO [ESC]
+      </button>
+
+      <div className="relative z-10 max-w-sm w-full px-6 flex flex-col items-center space-y-6 text-center">
+        <div className="relative group w-44 h-44">
+          <div className="absolute -inset-3 rounded-full border border-emerald-500/30 animate-spin" style={{ animationDuration: '8s' }} />
+          <div className="absolute -inset-1 rounded-full border border-dashed border-emerald-400/50 animate-spin" style={{ animationDuration: '12s' }} />
+
+          <div className="absolute inset-0 z-20 overflow-hidden rounded-2xl pointer-events-none">
+            <div className="w-full h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_15px_#10b981] animate-bounce" style={{ animationDuration: '2s' }} />
+          </div>
+
+          <div className="w-full h-full rounded-2xl overflow-hidden border-2 border-emerald-500/60 bg-[#070d18] shadow-[0_0_30px_rgba(16,185,129,0.25)] relative">
+            <img
+              src="/profile.jpg"
+              alt={PROFILE_DATA.name}
+              className="w-full h-full object-cover object-top filter contrast-125 transition-all duration-700"
+              style={{
+                filter: progress < 100 ? `grayscale(100%) blur(${(100 - progress) / 10}px)` : 'grayscale(0%)'
+              }}
+              onError={(e: any) => {
+                e.target.onerror = null;
+                e.target.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80';
+              }}
+            />
+
+            <div className="absolute top-2 left-2 text-emerald-400 font-bold text-[8px]">+</div>
+            <div className="absolute top-2 right-2 text-emerald-400 font-bold text-[8px]">+</div>
+            <div className="absolute bottom-2 left-2 text-emerald-400 font-bold text-[8px]">+</div>
+            <div className="absolute bottom-2 right-2 text-emerald-400 font-bold text-[8px]">+</div>
+          </div>
+        </div>
+
+        <div className="w-full space-y-2 text-left bg-[#070d18] border border-emerald-500/30 p-4 rounded-xl shadow-lg">
+          <div className="flex justify-between items-center text-[10px] text-slate-500 border-b border-slate-800 pb-1.5">
+            <span className="flex items-center gap-1"><Scan className="w-3 h-3 text-emerald-400" /> SYSTEM BOOT DIAGNOSTIC</span>
+            <span className="text-emerald-400 font-bold">{progress}%</span>
+          </div>
+
+          <p className="text-emerald-300 font-bold text-[11px] h-5 truncate">
+            &gt; {bootLogs[step]}
+          </p>
+
+          <div className="w-full h-1 bg-slate-900 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 transition-all duration-150"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// MAIN PAGE COMPONENT
+// ============================================================================
 export default function Home() {
   const [isBooting, setIsBooting] = useState(true);
   const [activeStackTab, setActiveStackTab] = useState('ALL');
@@ -61,15 +206,20 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-[#050807] text-white font-mono selection:bg-emerald-500 selection:text-black">
-      {/* Booting Loader Animation */}
+      {/* Biometric Boot Loader Overlay */}
       <AnimatePresence>
-        {isBooting && <BootLoader onComplete={() => setIsBooting(false)} />}
+        {isBooting && <BiometricBootLoader onComplete={() => setIsBooting(false)} />}
       </AnimatePresence>
 
       <ThreeBackground />
       <CustomCursor />
-      <Navbar />
-      <SystemTelemetryHUD />
+
+      {!isBooting && (
+        <>
+          <Navbar />
+          <SystemTelemetryHUD />
+        </>
+      )}
 
       {/* SECTION 1: HERO & TERMINAL CLI */}
       <section id="hero" className="relative z-10 min-h-screen pt-32 pb-16 px-6 flex flex-col justify-between max-w-6xl mx-auto">
@@ -81,7 +231,7 @@ export default function Home() {
             className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] tracking-widest uppercase mb-6"
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Software Engineer & DevOps Specialist</span>
+            <span>{PROFILE_DATA.status}</span>
           </motion.div>
 
           <motion.h1
@@ -99,7 +249,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="max-w-2xl mx-auto text-gray-400 text-xs md:text-sm leading-relaxed mb-8"
           >
-            Architecting full-stack web applications, AI analysis engines, and automated DevOps infrastructure with high yield and zero security compromises[cite: 1].
+            {PROFILE_DATA.bio}
           </motion.p>
         </div>
 
@@ -108,15 +258,123 @@ export default function Home() {
           <InteractiveCLI />
         </div>
 
-        {/* Jump Wormhole to Section 2 */}
         <NextSectionWormhole
-          nextSectionId="stack"
-          nextSectionName="INVENTORY STACK"
+          nextSectionId="about"
+          nextSectionName="ABOUT & SOCIAL CONNECT"
           sectionNumber="02"
         />
       </section>
 
-      {/* SECTION 2: TECH STACK PERIODIC TABLE */}
+      {/* SECTION 2: ABOUT ME & SOCIAL CONNECT HUB */}
+      <section id="about" className="relative z-10 py-24 px-6 max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-8 border-b border-emerald-500/20 pb-6"
+        >
+          <span className="text-emerald-400 text-xs tracking-widest uppercase">// IDENTITY & CHANNELS</span>
+          <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white mt-1">
+            About Me & Social Connect
+          </h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* PROFILE IMAGE CARD */}
+          <div className="lg:col-span-4 bg-[#070d18]/90 border border-emerald-500/30 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-4">
+            <div className="w-40 h-40 rounded-2xl overflow-hidden border-2 border-emerald-500/60 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+              <img
+                src="/profile.jpg"
+                alt={PROFILE_DATA.name}
+                className="w-full h-full object-cover object-top"
+                onError={(e: any) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80';
+                }}
+              />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">{PROFILE_DATA.name}</h3>
+              <p className="text-xs text-emerald-400 font-mono pt-1">{PROFILE_DATA.title}</p>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-slate-400">
+              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+              <span>{PROFILE_DATA.location}</span>
+            </div>
+          </div>
+
+          {/* BIO DETAILS & SOCIAL CONTACT LINKS */}
+          <div className="lg:col-span-8 bg-[#070d18]/90 border border-slate-800 p-8 rounded-2xl flex flex-col justify-between space-y-6">
+            <div className="space-y-3">
+              <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full">
+                SOFTWARE ENGINEER & DEVSECOPS
+              </span>
+              <p className="text-sm text-slate-300 leading-relaxed pt-2">
+                Undergraduate Software Engineer studying at SLIIT City Uni (University of Bedfordshire). Passionate about cloud computing, AST vulnerability scanning, deep learning computer vision, and building secure automated microservices.
+              </p>
+            </div>
+
+            {/* DIRECT SOCIAL MEDIA & CONTACT BUTTONS */}
+            <div className="space-y-3 border-t border-slate-800 pt-6">
+              <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider">// DIRECT CONNECT CHANNELS</p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <a
+                  href={PROFILE_DATA.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between p-3 bg-slate-900/80 border border-slate-800 rounded-xl hover:border-emerald-500/50 hover:text-emerald-400 transition"
+                >
+                  <span className="flex items-center gap-2">
+                    <GithubIcon className="w-4 h-4 text-emerald-400" /> GitHub / Thiviyanath
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href={PROFILE_DATA.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between p-3 bg-slate-900/80 border border-slate-800 rounded-xl hover:border-emerald-500/50 hover:text-emerald-400 transition"
+                >
+                  <span className="flex items-center gap-2">
+                    <LinkedinIcon className="w-4 h-4 text-emerald-400" /> LinkedIn / thiviyanath-m
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href={`mailto:${PROFILE_DATA.email}`}
+                  className="flex items-center justify-between p-3 bg-slate-900/80 border border-slate-800 rounded-xl hover:border-emerald-500/50 hover:text-emerald-400 transition"
+                >
+                  <span className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-emerald-400" /> {PROFILE_DATA.email}
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href={`tel:${PROFILE_DATA.phone}`}
+                  className="flex items-center justify-between p-3 bg-slate-900/80 border border-slate-800 rounded-xl hover:border-emerald-500/50 hover:text-emerald-400 transition"
+                >
+                  <span className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-emerald-400" /> {PROFILE_DATA.phone}
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <NextSectionWormhole
+          nextSectionId="stack"
+          nextSectionName="INVENTORY STACK"
+          sectionNumber="03"
+        />
+      </section>
+
+      {/* SECTION 3: TECH STACK PERIODIC TABLE */}
       <section id="stack" className="relative z-10 min-h-screen py-24 px-6 max-w-6xl mx-auto flex flex-col justify-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -195,7 +453,6 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* Jump Wormhole to Section 3 */}
         <NextSectionWormhole
           nextSectionId="projects"
           nextSectionName="INTERACTIVE AI & CV LAB"
@@ -203,7 +460,7 @@ export default function Home() {
         />
       </section>
 
-      {/* SECTION 3: INTERACTIVE PROJECTS LAB */}
+      {/* SECTION 4: INTERACTIVE PROJECTS LAB */}
       <section id="projects" className="relative z-10 py-24 px-6 max-w-6xl mx-auto">
         <div className="mb-8 border-b border-emerald-500/20 pb-6">
           <span className="text-emerald-400 text-xs tracking-widest uppercase">// SYNTHESIS PIPELINE</span>
