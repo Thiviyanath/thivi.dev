@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Lenis from 'lenis';
 import { 
   Scan, FastForward, Mail, Phone, MapPin, 
-  ExternalLink, User, Globe, Code2, ShieldCheck, Terminal 
+  ExternalLink, User, Globe, Code2, ShieldCheck, Terminal,
+  Layers, Play, Shield, Cpu, RefreshCw, Zap, CheckCircle2,
+  Activity, ArrowRight, Radio, Sparkles, Power, Send
 } from 'lucide-react';
 import ThreeBackground from './components/ThreeBackground';
 import CustomCursor from './components/CustomCursor';
 import { Navbar } from './components/Navbar';
 import { InteractiveCLI } from './components/InteractiveCLI';
 import { PeriodicElement } from './components/PeriodicElement';
-import { AIPatchSimulator } from './components/AIPatchSimulator';
-import { GestureSimulator } from './components/GestureSimulator';
 import { NextSectionWormhole } from './components/NextSectionWormhole';
 import { SystemTelemetryHUD } from './components/SystemTelemetryHUD';
 import { sound } from './utils/sound';
@@ -50,7 +50,7 @@ const TECH_STACK = [
 
 const PROFILE_DATA = {
   name: "Thiviyanath Maheswaran",
-  title: "Full-Stack Software Engineer",
+  title: "Full Stack Developer",
   location: "Kalubowila, Colombo, Sri Lanka",
   status: "Seeking Software Engineering Internships",
   bio: "Undergraduate Software Engineer specializing in DevSecOps, Cloud Infrastructure, and Deep Learning Vision. Experienced in building static code analysis engines (AST), containerized microservice architectures, and interactive computer vision tools.",
@@ -61,9 +61,98 @@ const PROFILE_DATA = {
   website: "https://ithivi.xyz"
 };
 
-// ============================================================================
+const PROJECT_CASE_STUDIES = [
+  {
+    id: "cs1",
+    title: "AI DevSecOps Vulnerability & Secret Audit Engine",
+    tagline: "Automated AST Static Analysis & LLM Code Patching Engine",
+    category: "AI / DevSecOps Security",
+    architecture: {
+      frontend: "CLI / Web AST Inspector Interface",
+      api: "Gemini API OWASP Classifier",
+      backend: "Python Abstract Syntax Tree (AST) Parser",
+      database: "OWASP Rule Index (AST/Regex)"
+    },
+    problem: "Hardcoded AWS secrets and dynamic SQL execution flaws bypass standard regex string matching.",
+    solution: "Engineered an AST static analysis engine that parses Python syntax trees, isolates vulnerable node structures, and streams OWASP patches.",
+    demoType: "ast_auditor",
+    logs: [
+      "Parsing /src/auth/service.py syntax tree...",
+      "CRITICAL: AWS Access Key detected at AST Node [Line 42]",
+      "HIGH: Unsanitized SQL execution detected at AST Node [Line 88]",
+      "Dispatching payload to Gemini API...",
+      "✔ Classified as OWASP A03 (Injection) & A07 (Identification)",
+      "✔ Patch generated: os.getenv('AWS_SECRET_KEY')"
+    ]
+  },
+  {
+    id: "cs2",
+    title: "Student Credit Evaluation REST API",
+    tagline: "Containerized & Hardened Academic Endpoint Suite",
+    category: "Backend / API Security",
+    architecture: {
+      frontend: "Swagger / Next.js API Explorer",
+      api: "Flask REST API Router",
+      backend: "JWT Middleware & Schema Validation Engine",
+      database: "Isolated SQLite Docker Data Volume"
+    },
+    problem: "Academic credit evaluation systems require strictly validated endpoints immune to unauthorized data access.",
+    solution: "Deployed a containerized Flask API with token-based authentication, strict payload validation schemas, and database isolation.",
+    demoType: "api_tester",
+    logs: [
+      "POST /api/v1/students/evaluate HTTP/1.1",
+      "Host: api.ithivi.xyz",
+      "Authorization: Bearer eyJhbGciOiJIUzI1Ni...",
+      "Executing JWT authentication middleware...",
+      "HTTP/1.1 200 OK - Approved (Risk Level: LOW)"
+    ]
+  },
+  {
+    id: "cs3",
+    title: "Cats vs Dogs Deep Learning CNN Classifier",
+    tagline: "High-Accuracy Binary Visual Recognition Network",
+    category: "AI / Deep Learning",
+    architecture: {
+      frontend: "Matplotlib Visual Dashboard",
+      api: "TensorFlow Keras Sequential Model",
+      backend: "Batch Image Processing Pipeline",
+      database: "25,000+ Image Dataset Buffer"
+    },
+    problem: "Large-scale visual classification suffers from overfitting without proper convolutional layer depth.",
+    solution: "Trained a custom CNN pipeline using TensorFlow and Keras across 25,000+ images with data augmentation, achieving 85–90% accuracy.",
+    demoType: "cnn_classifier",
+    logs: [
+      "Loading Keras CNN weights into execution graph...",
+      "Processing input tensor [Batch 32, 224x224x3]...",
+      "Conv2D -> ReLU -> MaxPool2D -> Dropout (0.25)",
+      "Classification: 'Dog' (Confidence: 97.9%)"
+    ]
+  },
+  {
+    id: "cs4",
+    title: "NeuroTouch AI - Gesture Control System",
+    tagline: "Low-Latency Touchless HCI Desktop Interaction Engine",
+    category: "Computer Vision / HCI",
+    architecture: {
+      frontend: "PyQt5 Interactive GUI Suite",
+      api: "MediaPipe Hand Mesh Landmark Tracker",
+      backend: "PyAutoGUI System Input Driver",
+      database: "Real-time Frame Buffer"
+    },
+    problem: "Touchless interface execution requires minimal processing latency between video frames and mouse actions.",
+    solution: "Constructed an HCI application mapping 21 3D hand mesh coordinates from MediaPipe to real-time OS input events.",
+    demoType: "gesture_sim",
+    logs: [
+      "Initializing OpenCV camera feed (60 FPS)...",
+      "Tracking 21 3D coordinates via MediaPipe",
+      "Tracked Landmark 8 (Index Tip) at (x: 420, y: 310)",
+      "Distance (Thumb - Index) < 12px -> Triggering LEFT_CLICK",
+      "Pipeline Latency: 6.2ms"
+    ]
+  }
+];
+
 // BIOMETRIC PROFILE BOOT INTRO OVERLAY
-// ============================================================================
 function BiometricBootLoader({ onComplete }: { onComplete: () => void }) {
   const [step, setStep] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -174,13 +263,19 @@ function BiometricBootLoader({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-// ============================================================================
 // MAIN PAGE COMPONENT
-// ============================================================================
 export default function Home() {
   const [isBooting, setIsBooting] = useState(true);
   const [activeStackTab, setActiveStackTab] = useState('ALL');
   const [hoveredTech, setHoveredTech] = useState<typeof TECH_STACK[0] | null>(null);
+
+  // Active Project Selection & Demo State
+  const [selectedProject, setSelectedProject] = useState(PROJECT_CASE_STUDIES[0]);
+  const [demoActive, setDemoActive] = useState(false);
+  const [astInputCode, setAstInputCode] = useState(
+    "AWS_SECRET_KEY = 'AKIAIOSFODNN7EXAMPLE'\nquery = \"SELECT * FROM users WHERE id = '\" + user_input + \"'\"\neval(untrusted_payload)"
+  );
+  const [astResults, setAstResults] = useState<any[] | null>(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -200,6 +295,23 @@ export default function Home() {
     };
   }, []);
 
+  const runLiveProjectDemo = () => {
+    sound.playClick();
+    setDemoActive(true);
+    setAstResults(null);
+
+    setTimeout(() => {
+      setDemoActive(false);
+      if (selectedProject.demoType === 'ast_auditor') {
+        setAstResults([
+          { level: 'CRITICAL', msg: 'Hardcoded AWS Access Key in AST Node', fix: "Use os.getenv('AWS_SECRET_KEY')" },
+          { level: 'HIGH', msg: 'Unsanitized SQL String Injection risk', fix: 'Use Parameterized Queries (cursor.execute)' },
+          { level: 'CRITICAL', msg: 'Arbitrary execution flaw via eval()', fix: 'Parse via safe json.loads()' }
+        ]);
+      }
+    }, 1100);
+  };
+
   const filteredTech = activeStackTab === 'ALL'
     ? TECH_STACK
     : TECH_STACK.filter((t) => t.cat === activeStackTab);
@@ -214,6 +326,7 @@ export default function Home() {
       <ThreeBackground />
       <CustomCursor />
 
+      {/* Render Navbar and Telemetry HUD once boot finishes */}
       {!isBooting && (
         <>
           <Navbar />
@@ -280,7 +393,6 @@ export default function Home() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {/* PROFILE IMAGE CARD */}
           <div className="lg:col-span-4 bg-[#070d18]/90 border border-emerald-500/30 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-4">
             <div className="w-40 h-40 rounded-2xl overflow-hidden border-2 border-emerald-500/60 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
               <img
@@ -303,7 +415,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* BIO DETAILS & SOCIAL CONTACT LINKS */}
           <div className="lg:col-span-8 bg-[#070d18]/90 border border-slate-800 p-8 rounded-2xl flex flex-col justify-between space-y-6">
             <div className="space-y-3">
               <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full">
@@ -314,7 +425,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* DIRECT SOCIAL MEDIA & CONTACT BUTTONS */}
             <div className="space-y-3 border-t border-slate-800 pt-6">
               <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider">// DIRECT CONNECT CHANNELS</p>
               
@@ -455,27 +565,190 @@ export default function Home() {
 
         <NextSectionWormhole
           nextSectionId="projects"
-          nextSectionName="INTERACTIVE AI & CV LAB"
+          nextSectionName="FEATURED PROJECTS & CASE STUDIES"
           sectionNumber="04"
         />
       </section>
 
-      {/* SECTION 4: INTERACTIVE PROJECTS LAB */}
+      {/* SECTION 4: FULL-STACK PROJECTS & CASE STUDIES SHOWCASE */}
       <section id="projects" className="relative z-10 py-24 px-6 max-w-6xl mx-auto">
-        <div className="mb-8 border-b border-emerald-500/20 pb-6">
-          <span className="text-emerald-400 text-xs tracking-widest uppercase">// SYNTHESIS PIPELINE</span>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-8 border-b border-emerald-500/20 pb-6"
+        >
+          <span className="text-emerald-400 text-xs tracking-widest uppercase">// ENGINEERING PORTFOLIO</span>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mt-1">
-            Interactive AI & CV Workbenches
+            Projects & Case Studies
           </h2>
+        </motion.div>
+
+        {/* SELECTOR TAB STRIP */}
+        <div className="flex overflow-x-auto gap-3 pb-4 mb-6">
+          {PROJECT_CASE_STUDIES.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => {
+                sound.playClick();
+                setSelectedProject(p);
+                setAstResults(null);
+              }}
+              className={`px-4 py-3 rounded-xl border text-left shrink-0 text-xs transition ${
+                selectedProject.id === p.id
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                  : 'bg-[#070d18] text-slate-400 border-slate-800 hover:border-slate-700'
+              }`}
+            >
+              <p className="font-bold text-white">{p.title}</p>
+              <p className="text-[10px] text-emerald-400 pt-0.5">{p.category}</p>
+            </button>
+          ))}
         </div>
 
-        <AIPatchSimulator />
-        <GestureSimulator />
+        {/* ACTIVE PROJECT DISPLAY PANEL */}
+        <div className="bg-[#070d18]/90 border border-emerald-500/30 rounded-2xl p-6 lg:p-8 space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div>
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full uppercase">
+                {selectedProject.category}
+              </span>
+              <h3 className="text-2xl font-bold text-white pt-2">{selectedProject.title}</h3>
+              <p className="text-xs text-slate-400 pt-1 font-sans">{selectedProject.tagline}</p>
+            </div>
+
+            <button
+              onClick={runLiveProjectDemo}
+              disabled={demoActive}
+              className="px-5 py-2.5 bg-emerald-400 text-black font-bold rounded-xl hover:bg-emerald-300 transition flex items-center gap-2 text-xs shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+            >
+              {demoActive ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-current" />}
+              {demoActive ? 'RUNNING DEMO...' : 'EXECUTE LIVE DEMO'}
+            </button>
+          </div>
+
+          {/* ARCHITECTURE LAYERS */}
+          <div className="space-y-2">
+            <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider">// FULL-STACK ARCHITECTURE LAYERS</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+              <div className="p-3.5 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
+                <p className="text-cyan-400 font-bold">1. FRONTEND / UI</p>
+                <p className="text-slate-300 text-[11px]">{selectedProject.architecture.frontend}</p>
+              </div>
+              <div className="p-3.5 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
+                <p className="text-yellow-400 font-bold">2. API / ROUTING</p>
+                <p className="text-slate-300 text-[11px]">{selectedProject.architecture.api}</p>
+              </div>
+              <div className="p-3.5 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
+                <p className="text-emerald-400 font-bold">3. BACKEND / LOGIC</p>
+                <p className="text-slate-300 text-[11px]">{selectedProject.architecture.backend}</p>
+              </div>
+              <div className="p-3.5 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
+                <p className="text-purple-400 font-bold">4. DATABASE / STORE</p>
+                <p className="text-slate-300 text-[11px]">{selectedProject.architecture.database}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* LIVE DEMO CONSOLE */}
+          <div className="bg-black/80 border border-slate-800 rounded-xl p-5 space-y-4">
+            <div className="flex justify-between items-center text-xs border-b border-slate-800 pb-2">
+              <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+                <Terminal className="w-4 h-4" /> LIVE INTERACTIVE OUTPUT CONSOLE
+              </span>
+              <span className="text-[10px] text-slate-500">ENGINE STATE: ACTIVE</span>
+            </div>
+
+            {selectedProject.demoType === 'ast_auditor' && (
+              <div className="space-y-3">
+                <p className="text-xs text-slate-400 font-sans">Source code evaluated by AST engine:</p>
+                <textarea
+                  value={astInputCode}
+                  onChange={(e) => setAstInputCode(e.target.value)}
+                  rows={3}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-cyan-300 text-xs font-mono focus:outline-none focus:border-emerald-500"
+                />
+                {astResults && (
+                  <div className="space-y-2 pt-2 text-xs">
+                    <p className="font-bold text-emerald-400">AUDIT FINDINGS & OWASP FIXES:</p>
+                    {astResults.map((r, idx) => (
+                      <div key={idx} className="p-2.5 bg-red-500/10 border border-red-500/30 rounded flex justify-between items-center">
+                        <div>
+                          <span className="text-red-400 font-bold">[{r.level}]</span> <span className="text-slate-200">{r.msg}</span>
+                          <p className="text-emerald-400 text-[11px] pt-0.5">Recommended Fix: {r.fix}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedProject.demoType !== 'ast_auditor' && (
+              <div className="space-y-1 text-xs">
+                {selectedProject.logs.map((log, i) => (
+                  <p key={i} className="text-slate-300 flex items-start gap-1">
+                    <span className="text-emerald-400">›</span> {log}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* PROBLEM & SOLUTION */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 text-xs font-sans">
+            <div className="space-y-1">
+              <p className="font-mono text-slate-200 font-bold">ENGINEERING PROBLEM:</p>
+              <p className="text-slate-400 leading-relaxed">{selectedProject.problem}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="font-mono text-emerald-400 font-bold">ARCHITECTURAL SOLUTION:</p>
+              <p className="text-slate-400 leading-relaxed">{selectedProject.solution}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: LIVE TERMINAL RE-INIT & SYSTEM SHUTDOWN PORTAL */}
+      <section className="relative z-10 py-20 px-6 max-w-4xl mx-auto text-center">
+        <div className="bg-[#070d18]/90 border border-emerald-500/40 p-8 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.15)] relative overflow-hidden space-y-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs">
+            <Radio className="w-3.5 h-3.5 animate-pulse" /> SYSTEM READY FOR DIRECT EVALUATION
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tight">
+            ESTABLISH ENGAGEMENT PROTOCOL
+          </h2>
+
+          <p className="text-xs text-slate-400 max-w-lg mx-auto font-sans leading-relaxed">
+            Interested in reviewing full architectural code repos, scheduling an interview, or discussing software engineering roles? Initiate contact below.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-4 pt-2">
+            <a
+              href={`mailto:${PROFILE_DATA.email}`}
+              onClick={() => sound.playSuccess()}
+              className="px-6 py-3 bg-emerald-400 text-black font-extrabold rounded-xl hover:bg-emerald-300 transition flex items-center gap-2 text-xs shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+            >
+              <Send className="w-4 h-4" /> [EXECUTE_CONTACT_PROTOCOL]
+            </a>
+
+            <button
+              onClick={() => {
+                sound.playClick();
+                setIsBooting(true);
+              }}
+              className="px-6 py-3 bg-slate-900 border border-slate-700 text-slate-300 rounded-xl hover:text-emerald-400 hover:border-emerald-500/50 transition flex items-center gap-2 text-xs"
+            >
+              <Power className="w-4 h-4 text-emerald-400" /> [REBOOT_SYSTEM_SCAN]
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* FOOTER */}
       <footer className="relative z-10 border-t border-emerald-500/10 py-12 text-center text-xs text-gray-500 font-mono">
-        <p>© 2026 Thiviyanath Maheswaran • Kalubowila Colombo[cite: 1]</p>
+        <p>© 2026 Thiviyanath Maheswaran • Kalubowila Colombo</p>
         <p className="mt-1 text-emerald-400/80">Built with Next.js, Framer Motion & Lenis Smooth Motion</p>
       </footer>
     </div>
