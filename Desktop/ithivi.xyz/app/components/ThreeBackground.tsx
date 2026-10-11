@@ -3,12 +3,13 @@
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import React, { useRef, useState } from 'react';
+import * as THREE from 'three';
 
 function SmokeParticles() {
   const ref = useRef<THREE.Group>(null);
 
   const [sphere] = useState(() => {
-    const coords = new Float32Array(1500 * 3);
+    const coords = new Float32Array(1200 * 3);
     for (let i = 0; i < coords.length; i++) {
       coords[i] = (Math.random() - 0.5) * 5;
     }
@@ -17,8 +18,8 @@ function SmokeParticles() {
 
   useFrame((_, delta) => {
     if (ref.current) {
-      ref.current.rotation.x -= delta / 12;
-      ref.current.rotation.y -= delta / 16;
+      ref.current.rotation.x -= delta / 14;
+      ref.current.rotation.y -= delta / 18;
     }
   });
 
@@ -31,7 +32,7 @@ function SmokeParticles() {
           size={0.01}
           sizeAttenuation={true}
           depthWrite={false}
-          opacity={0.5}
+          opacity={0.4}
         />
       </Points>
     </group>
