@@ -50,7 +50,7 @@ const TECH_STACK = [
 
 const PROFILE_DATA = {
   name: "Thiviyanath Maheswaran",
-  title: "Software Engineer & AI Security Specialist",
+  title: "Full-Stack Software Engineer",
   location: "Kalubowila, Colombo, Sri Lanka",
   status: "Seeking Software Engineering Internships",
   bio: "Undergraduate Software Engineer specializing in DevSecOps, Cloud Infrastructure, and Deep Learning Vision. Experienced in building static code analysis engines (AST), containerized microservice architectures, and interactive computer vision tools.",
