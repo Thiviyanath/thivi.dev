@@ -1,102 +1,162 @@
-'use client';
-
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { PeriodicElement } from '../components/PeriodicElement';
-
-const TABS = [
-  { id: 'ALL', label: '[00] ALL ELEMENTS' },
-  { id: 'LANGUAGES', label: '[01] CORE LANGUAGES' },
-  { id: 'FRAMEWORKS', label: '[02] FRAMEWORKS & LIBRARIES' },
-  { id: 'DEVOPS', label: '[03] CLOUD & DEVOPS' },
-  { id: 'AI', label: '[04] DATABASES & AI' },
-];
-
-const STACK_DATA = [
-  { symbol: 'Py', name: 'Python', num: 1, cat: 'LANGUAGES', purity: '99.5%', desc: 'AST, OpenCV, TensorFlow, Flask' },
-  { symbol: 'Ts', name: 'TypeScript', num: 2, cat: 'LANGUAGES', purity: '98.0%', desc: 'Next.js, React, Node.js' },
-  { symbol: 'Js', name: 'JavaScript', num: 3, cat: 'LANGUAGES', purity: '98.5%', desc: 'ES6+, Web APIs, React State' },
-  { symbol: 'Ja', name: 'Java', num: 4, cat: 'LANGUAGES', purity: '92.0%', desc: 'OOP, Data Structures & Algorithms' },
-  { symbol: 'Re', name: 'React', num: 5, cat: 'FRAMEWORKS', purity: '98.5%', desc: 'Next.js, Framer Motion, UI Architecture' },
-  { symbol: 'Fl', name: 'Flask', num: 6, cat: 'FRAMEWORKS', purity: '90.0%', desc: 'Python REST Microservices' },
-  { symbol: 'Dk', name: 'Docker', num: 7, cat: 'DEVOPS', purity: '95.0%', desc: 'Containerization & Microservices' },
-  { symbol: 'Aws', name: 'AWS Cloud', num: 8, cat: 'DEVOPS', purity: '90.0%', desc: 'EC2, S3, IAM, Cloud Foundations' },
-  { symbol: 'Gcp', name: 'GCP Basics', num: 9, cat: 'DEVOPS', purity: '85.0%', desc: 'Cloud Infrastructure' },
-  { symbol: 'Pg', name: 'PostgreSQL', num: 10, cat: 'AI', purity: '96.0%', desc: 'Schema Design & Odoo ORM' },
-  { symbol: 'Cv', name: 'OpenCV', num: 11, cat: 'AI', purity: '94.0%', desc: 'MediaPipe Landmark Systems' },
-  { symbol: 'Tf', name: 'TensorFlow', num: 12, cat: 'AI', purity: '88.0%', desc: 'CNN Deep Learning Classifiers' },
-];
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import ScrollReveal from "../components/ScrollReveal";
+import {
+  CREDENTIALS,
+  ENGINEERING_APPROACH,
+  EXPERIENCE,
+  PROFILE,
+} from "../components/portfolio-data";
 
 export default function AboutPage() {
-  const [activeTab, setActiveTab] = useState('ALL');
-  const [hoveredTech, setHoveredTech] = useState<typeof STACK_DATA[0] | null>(null);
-
-  const filteredTech = activeTab === 'ALL' ? STACK_DATA : STACK_DATA.filter((item) => item.cat === activeTab);
-
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 font-mono text-white">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12 border-b border-emerald-500/20 pb-8">
-        <span className="text-emerald-400 text-xs tracking-widest uppercase">// INVENTORY & SPECIFICATION</span>
-        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-white mt-1">
-          Technical Inventory
-        </h1>
-        <p className="text-xs text-gray-400 max-w-2xl mt-3 leading-relaxed">
-          Software Engineer & Full Stack Developer based in Kalubowila, Colombo[cite: 1]. Focused on building 99.99% pure code architectures, automated DevSecOps pipelines, and computer vision systems[cite: 1].
-        </p>
-      </motion.div>
+    <div className="space-y-16">
+      <ScrollReveal>
+        <header className="max-w-3xl space-y-4">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
+            Background & practice
+          </p>
+          <h1 className="title-depth text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl">
+            About
+          </h1>
+          <p className="text-lg leading-8 text-zinc-300">{PROFILE.bio}</p>
+          <p className="text-sm leading-6 text-zinc-500">
+            Based in {PROFILE.location}. I enjoy working where product needs
+            meet thoughtful engineering constraints.
+          </p>
+        </header>
+      </ScrollReveal>
 
-      <div className="flex flex-wrap gap-2 mb-8">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg text-xs tracking-wider transition-all border ${
-              activeTab === tab.id
-                ? 'bg-emerald-500 text-black border-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.4)]'
-                : 'bg-black/60 text-emerald-400/80 border-emerald-500/30 hover:border-emerald-400'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      <motion.div layout className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        <AnimatePresence>
-          {filteredTech.map((tech) => (
-            <motion.div
-              key={tech.symbol}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              onMouseEnter={() => setHoveredTech(tech)}
-              onMouseLeave={() => setHoveredTech(null)}
-              className="cursor-pointer"
+      <section aria-labelledby="approach-heading" className="space-y-6">
+        <ScrollReveal>
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
+              How I work
+            </p>
+            <h2
+              id="approach-heading"
+              className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100"
             >
-              <PeriodicElement symbol={tech.symbol} name={tech.name} number={tech.num} category={tech.cat} purity={tech.purity} />
-            </motion.div>
+              Engineering with intent.
+            </h2>
+          </div>
+        </ScrollReveal>
+        <div className="grid gap-4 md:grid-cols-3">
+          {ENGINEERING_APPROACH.map((item, index) => (
+            <ScrollReveal key={item.title} delayMs={index * 70}>
+              <article className="h-full rounded-xl border border-line bg-surface/80 p-5">
+                <h3 className="font-semibold text-zinc-100">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-zinc-500">
+                  {item.note}
+                </p>
+              </article>
+            </ScrollReveal>
           ))}
-        </AnimatePresence>
-      </motion.div>
+        </div>
+      </section>
 
-      <AnimatePresence>
-        {hoveredTech && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="mt-6 p-4 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-xs font-mono text-emerald-300 flex justify-between items-center"
-          >
-            <div>
-              <span className="text-white font-bold mr-2">[{hoveredTech.symbol}] {hoveredTech.name}:</span>
-              <span>{hoveredTech.desc}</span>
+      <section
+        id="experience"
+        aria-labelledby="experience-heading"
+        className="grid gap-6 border-t border-line pt-10 lg:grid-cols-[0.65fr_1.35fr]"
+      >
+        <ScrollReveal>
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
+              Experience
+            </p>
+            <h2
+              id="experience-heading"
+              className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100"
+            >
+              Work in practice.
+            </h2>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal delayMs={80}>
+          <article className="rounded-xl border border-line bg-surface/80 p-5 sm:p-7">
+            <div className="flex flex-col gap-2 border-b border-line pb-5 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-zinc-100">
+                  {EXPERIENCE.role}
+                </h3>
+                <p className="mt-1 text-sm text-accent">
+                  {EXPERIENCE.organization}
+                </p>
+              </div>
+              <span className="w-fit rounded-full border border-line px-3 py-1 text-xs text-zinc-400">
+                {EXPERIENCE.period}
+              </span>
             </div>
-            <span className="text-emerald-400 font-bold">{hoveredTech.purity}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <p className="mt-5 text-sm leading-6 text-zinc-400">
+              {EXPERIENCE.summary}
+            </p>
+            <ul className="mt-5 space-y-3">
+              {EXPERIENCE.highlights.map((highlight) => (
+                <li
+                  key={highlight}
+                  className="flex gap-3 text-sm leading-6 text-zinc-500"
+                >
+                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+        </ScrollReveal>
+      </section>
+
+      <section
+        id="education"
+        aria-labelledby="education-heading"
+        className="space-y-6 border-t border-line pt-10"
+      >
+        <ScrollReveal>
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
+              Education & community
+            </p>
+            <h2
+              id="education-heading"
+              className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100"
+            >
+              Foundations and continued learning.
+            </h2>
+          </div>
+        </ScrollReveal>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {CREDENTIALS.map((credential, index) => (
+            <ScrollReveal key={credential.title} delayMs={(index % 3) * 60}>
+              <article className="h-full rounded-xl border border-line bg-surface/80 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-xs text-zinc-500">
+                    {credential.organization}
+                  </p>
+                  <span className="font-mono text-xs text-accent">
+                    {credential.period}
+                  </span>
+                </div>
+                <h3 className="mt-3 font-semibold text-zinc-100">
+                  {credential.title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-zinc-500">
+                  {credential.note}
+                </p>
+              </article>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      <ScrollReveal>
+        <Link
+          href="/contact"
+          className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors hover:text-emerald-300"
+        >
+          Start a conversation
+          <ArrowRight aria-hidden="true" className="size-4" />
+        </Link>
+      </ScrollReveal>
     </div>
   );
 }

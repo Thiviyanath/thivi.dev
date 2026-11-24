@@ -1,28 +1,100 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --color-background: #0b0d10;
+  --color-surface: #11151c;
+  --color-foreground: #f4f4f5;
+  --color-muted: #a1a1aa;
+  --color-accent: #34d399;
+  --color-line: rgb(255 255 255 / 0.1);
 }
 
 @layer base {
-  html,
-  body {
+  html {
     overflow-x: hidden;
+    scroll-padding-top: 6rem;
+    scrollbar-color: rgb(63 75 84) #0b0d10;
+  }
+
+  body {
+    min-width: 320px;
+    overflow-x: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid #34d399;
+    outline-offset: 3px;
   }
 }
 
-/* Custom Terminal Scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+::selection {
+  background-color: rgb(52 211 153 / 0.3);
+  color: #d1fae5;
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.6);
+
+::-webkit-scrollbar {
+  width: 10px;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(16, 185, 129, 0.3);
-  border-radius: 4px;
+
+::-webkit-scrollbar-track {
+  background: #0b0d10;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.6);
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid #0b0d10;
+  border-radius: 999px;
+  background: #3f4b54;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #34d399;
+}
+
+.dark-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.title-depth {
+  transform: perspective(900px) rotateX(5deg) rotateY(-1deg) translateZ(0);
+  transform-origin: left 70%;
+  text-shadow:
+    0 1px 0 rgb(255 255 255 / 0.12),
+    0 2px 0 rgb(24 24 27 / 0.35),
+    0 5px 0 rgb(24 24 27 / 0.24),
+    0 12px 24px rgb(0 0 0 / 0.32);
+}
+
+[data-scroll-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition: none;
+}
+
+[data-scroll-reveal="visible"] {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 700ms ease-out,
+    transform 700ms ease-out;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-depth,
+  [data-scroll-reveal="pending"],
+  [data-scroll-reveal="visible"] {
+    transform: none;
+    opacity: 1;
+    transition: none;
+  }
 }
