@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ArrowUpRight, Search } from "lucide-react";
 import ScrollReveal from "../components/ScrollReveal";
+import LiveDemoTabs from "../components/LiveDemoTabs";
 import { PROJECTS, PROFILE } from "../components/portfolio-data";
 
 const DOMAINS = ["All", ...new Set(PROJECTS.map((project) => project.domain))];
@@ -37,7 +38,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="space-y-12">
-      <ScrollReveal>
+      <ScrollReveal sectionLabel="Projects">
         <header className="max-w-3xl space-y-4">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
             Engineering case notes
@@ -52,7 +53,11 @@ export default function ProjectsPage() {
         </header>
       </ScrollReveal>
 
-      <section aria-label="Filter projects" className="space-y-5">
+      <section
+        data-section-sync="Case notes"
+        aria-label="Filter projects"
+        className="space-y-5"
+      >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex flex-wrap gap-2" aria-label="Filter by domain">
             {DOMAINS.map((domain) => {
@@ -99,7 +104,11 @@ export default function ProjectsPage() {
         {filteredProjects.length > 0 ? (
           <div className="grid gap-5 lg:grid-cols-2">
             {filteredProjects.map((project, index) => (
-              <ScrollReveal key={project.id} delayMs={(index % 2) * 70}>
+              <ScrollReveal
+                key={project.id}
+                delayMs={(index % 2) * 70}
+                tilt
+              >
                 <article
                   id={project.id}
                   className="flex h-full scroll-mt-28 flex-col rounded-2xl border border-line bg-surface/90 p-5 sm:p-7"
@@ -197,6 +206,34 @@ export default function ProjectsPage() {
             </button>
           </div>
         )}
+      </section>
+
+      <section
+        data-section-sync="Live lab"
+        aria-labelledby="projects-lab-heading"
+        className="space-y-6 border-t border-line pt-10"
+      >
+        <ScrollReveal>
+          <div className="max-w-2xl">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
+              Interactive lab
+            </p>
+            <h2
+              id="projects-lab-heading"
+              className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100"
+            >
+              Inspect the mechanics.
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-zinc-500">
+              These self-contained demos use local sample data: a rule-based
+              patch review, a thresholded detection pipeline, and a small
+              allowlisted CLI.
+            </p>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal>
+          <LiveDemoTabs />
+        </ScrollReveal>
       </section>
     </div>
   );

@@ -5,7 +5,7 @@ import { STACK_GROUPS } from "../components/portfolio-data";
 export default function StackPage() {
   return (
     <div className="space-y-12">
-      <ScrollReveal>
+      <ScrollReveal sectionLabel="Stack">
         <header className="max-w-3xl space-y-4">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
             Tools & responsibilities
@@ -20,9 +20,12 @@ export default function StackPage() {
         </header>
       </ScrollReveal>
 
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div
+        data-section-sync="Tool groups"
+        className="grid gap-5 lg:grid-cols-3"
+      >
         {STACK_GROUPS.map((group, index) => (
-          <ScrollReveal key={group.code} delayMs={index * 70}>
+          <ScrollReveal key={group.code} delayMs={index * 70} tilt>
             <section className="h-full rounded-2xl border border-line bg-surface/85 p-5 sm:p-6">
               <p className="font-mono text-xs text-accent">{group.code}</p>
               <h2 className="mt-3 text-lg font-semibold text-zinc-100">
@@ -46,7 +49,7 @@ export default function StackPage() {
         ))}
       </div>
 
-      <ScrollReveal>
+      <ScrollReveal sectionLabel="Selection criteria">
         <aside className="flex flex-col gap-4 rounded-xl border border-accent/20 bg-accent/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-2xl text-sm leading-6 text-zinc-400">
             I choose tools based on reliability, clear ownership, and how easily

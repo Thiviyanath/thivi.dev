@@ -11,7 +11,7 @@ import {
 export default function AboutPage() {
   return (
     <div className="space-y-16">
-      <ScrollReveal>
+      <ScrollReveal sectionLabel="About">
         <header className="max-w-3xl space-y-4">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
             Background & practice
@@ -27,7 +27,11 @@ export default function AboutPage() {
         </header>
       </ScrollReveal>
 
-      <section aria-labelledby="approach-heading" className="space-y-6">
+      <section
+        data-section-sync="Approach"
+        aria-labelledby="approach-heading"
+        className="space-y-6"
+      >
         <ScrollReveal>
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
@@ -43,7 +47,7 @@ export default function AboutPage() {
         </ScrollReveal>
         <div className="grid gap-4 md:grid-cols-3">
           {ENGINEERING_APPROACH.map((item, index) => (
-            <ScrollReveal key={item.title} delayMs={index * 70}>
+            <ScrollReveal key={item.title} delayMs={index * 70} tilt>
               <article className="h-full rounded-xl border border-line bg-surface/80 p-5">
                 <h3 className="font-semibold text-zinc-100">{item.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-zinc-500">
@@ -57,6 +61,7 @@ export default function AboutPage() {
 
       <section
         id="experience"
+        data-section-sync="Experience"
         aria-labelledby="experience-heading"
         className="grid gap-6 border-t border-line pt-10 lg:grid-cols-[0.65fr_1.35fr]"
       >
@@ -108,6 +113,7 @@ export default function AboutPage() {
 
       <section
         id="education"
+        data-section-sync="Education"
         aria-labelledby="education-heading"
         className="space-y-6 border-t border-line pt-10"
       >
@@ -126,7 +132,11 @@ export default function AboutPage() {
         </ScrollReveal>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CREDENTIALS.map((credential, index) => (
-            <ScrollReveal key={credential.title} delayMs={(index % 3) * 60}>
+            <ScrollReveal
+              key={credential.title}
+              delayMs={(index % 3) * 60}
+              tilt
+            >
               <article className="h-full rounded-xl border border-line bg-surface/80 p-5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-xs text-zinc-500">
@@ -148,7 +158,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <ScrollReveal>
+      <ScrollReveal sectionLabel="Contact link">
         <Link
           href="/contact"
           className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors hover:text-emerald-300"

@@ -10,6 +10,7 @@ import {
   UserRound,
 } from "lucide-react";
 import ScrollReveal from "./components/ScrollReveal";
+import LiveDemoTabs from "./components/LiveDemoTabs";
 import { PROJECTS, PROFILE } from "./components/portfolio-data";
 
 const SECTION_LINKS = [
@@ -42,7 +43,10 @@ const SECTION_LINKS = [
 export default function HomePage() {
   return (
     <div className="space-y-24">
-      <section className="grid items-center gap-10 lg:grid-cols-[1.35fr_0.65fr] lg:gap-16">
+      <section
+        data-section-sync="Overview"
+        className="grid items-center gap-10 lg:grid-cols-[1.35fr_0.65fr] lg:gap-16"
+      >
         <ScrollReveal className="space-y-7">
           <div className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-3 py-1.5 text-sm text-accent">
             <MapPin aria-hidden="true" className="size-4" />
@@ -105,7 +109,10 @@ export default function HomePage() {
       </section>
 
       <ScrollReveal>
-        <section className="grid gap-6 rounded-2xl border border-line bg-surface/80 p-6 sm:p-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-start">
+        <section
+          data-section-sync="Current focus"
+          className="grid gap-6 rounded-2xl border border-line bg-surface/80 p-6 sm:p-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-start"
+        >
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
               Current focus
@@ -125,7 +132,11 @@ export default function HomePage() {
         </section>
       </ScrollReveal>
 
-      <section aria-labelledby="sections-heading" className="space-y-7">
+      <section
+        data-section-sync="Navigation"
+        aria-labelledby="sections-heading"
+        className="space-y-7"
+      >
         <ScrollReveal className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
@@ -148,7 +159,7 @@ export default function HomePage() {
           {SECTION_LINKS.map((item, index) => {
             const Icon = item.icon;
             return (
-              <ScrollReveal key={item.href} delayMs={index * 70}>
+              <ScrollReveal key={item.href} delayMs={index * 70} tilt>
                 <Link
                   href={item.href}
                   className="group flex h-full items-start gap-4 rounded-xl border border-line bg-surface/80 p-5 transition-colors hover:border-accent/35 hover:bg-surface"
@@ -175,7 +186,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="featured-heading" className="space-y-7">
+      <section
+        data-section-sync="Selected work"
+        aria-labelledby="featured-heading"
+        className="space-y-7"
+      >
         <ScrollReveal className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
@@ -199,7 +214,7 @@ export default function HomePage() {
 
         <div className="grid gap-4 lg:grid-cols-3">
           {PROJECTS.slice(0, 3).map((project, index) => (
-            <ScrollReveal key={project.id} delayMs={index * 70}>
+            <ScrollReveal key={project.id} delayMs={index * 70} tilt>
               <article className="flex h-full flex-col rounded-xl border border-line bg-surface/80 p-5">
                 <p className="font-mono text-xs text-accent">{project.code}</p>
                 <h3 className="mt-3 text-lg font-semibold leading-snug text-zinc-100">
@@ -225,8 +240,39 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section
+        data-section-sync="Live lab"
+        aria-labelledby="live-lab-heading"
+        className="space-y-7"
+      >
+        <ScrollReveal>
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
+              Interactive lab
+            </p>
+            <h2
+              id="live-lab-heading"
+              className="mt-2 text-3xl font-semibold tracking-tight text-zinc-100"
+            >
+              Small systems, made testable.
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-500">
+              Explore a local rule-based code review, synthetic inference
+              pipeline, and an allowlisted portfolio CLI. Nothing executes or
+              sends data elsewhere.
+            </p>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal>
+          <LiveDemoTabs />
+        </ScrollReveal>
+      </section>
+
       <ScrollReveal>
-        <section className="flex flex-col gap-5 rounded-2xl border border-accent/20 bg-accent/[0.04] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+        <section
+          data-section-sync="Contact"
+          className="flex flex-col gap-5 rounded-2xl border border-accent/20 bg-accent/[0.04] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8"
+        >
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
               Direct channel

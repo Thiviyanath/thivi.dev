@@ -83,6 +83,13 @@
     transform 700ms ease-out;
 }
 
+[data-scroll-tilt="true"] {
+  transform: perspective(950px) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg)) translateZ(0);
+  transform-style: preserve-3d;
+  transition: transform 240ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
@@ -92,7 +99,8 @@
 @media (prefers-reduced-motion: reduce) {
   .title-depth,
   [data-scroll-reveal="pending"],
-  [data-scroll-reveal="visible"] {
+  [data-scroll-reveal="visible"],
+  [data-scroll-tilt="true"] {
     transform: none;
     opacity: 1;
     transition: none;

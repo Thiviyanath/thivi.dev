@@ -1,153 +1,220 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from "react";
 
-const SAMPLE_VULNERABILITIES = [
+const PATCH_SAMPLES = [
   {
-    name: 'Exposed AWS API Secret Key',
-    code: `import boto3\n\n# HARDCODED SECRET KEY DETECTED\nAWS_ACCESS_KEY = "AKIAIOSFODNN7EXAMPLE"\nAWS_SECRET_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"\n\ndef connect_s3():\n    client = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)\n    return client.list_buckets()`,
-    vulnType: 'OWASP A07:2021 - Identification & Authentication Failures',
-    patch: `import os\nimport boto3\n\n# SECURED: Extracted secrets to environment variables\nAWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY_ID")\nAWS_SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")\n\ndef connect_s3():\n    if not AWS_ACCESS_KEY or not AWS_SECRET_KEY:\n        raise ValueError("Missing AWS Credentials in environment variables.")\n    client = boto3.client('s3')\n    return client.list_buckets()`
+    id: "query-parameters",
+    label: "Query parameters",
+    rule: "DB-001 · Unparameterized query construction",
+    detail:
+      "Values are concatenated into a query string. Bind values through the database driver instead.",
+    before: [
+      "function findRecord(recordId: string) {",
+      '  const query = "SELECT * FROM records WHERE id = " + recordId;',
+      "  return database.query(query);",
+      "}",
+    ],
+    after: [
+      "function findRecord(recordId: string) {",
+      '  return database.query("SELECT * FROM records WHERE id = ?", [recordId]);',
+      "}",
+    ],
+    vulnerableHighlight: 1,
+    patchedHighlights: [1],
+    removed: 'const query = "SELECT * FROM records WHERE id = " + recordId;',
+    added:
+      'return database.query("SELECT * FROM records WHERE id = ?", [recordId]);',
   },
   {
-    name: 'SQL Injection Hazard',
-    code: `import sqlite3\n\ndef get_user_data(username):\n    conn = sqlite3.connect('users.db')\n    cursor = conn.cursor()\n    # CRITICAL: Dynamic string formatting query\n    query = f"SELECT * FROM users WHERE username = '{username}'"\n    cursor.execute(query)\n    return cursor.fetchall()`,
-    vulnType: 'OWASP A03:2021 - Injection Vector',
-    patch: `import sqlite3\n\ndef get_user_data(username):\n    conn = sqlite3.connect('users.db')\n    cursor = conn.cursor()\n    # SECURED: Parameterized SQL Query prevents SQL Injection\n    query = "SELECT * FROM users WHERE username = ?"\n    cursor.execute(query, (username,))\n    return cursor.fetchall()`
-  }
-];
+    id: "secret-config",
+    label: "Secret configuration",
+    rule: "CFG-002 · Secret-like value in source",
+    detail:
+      "A credential-shaped placeholder is embedded in source. Read configuration from the runtime environment and fail clearly when absent.",
+    before: [
+      'const serviceToken = "REDACTED_EXAMPLE_TOKEN";',
+      "",
+      "connectToService({ token: serviceToken });",
+    ],
+    after: [
+      'const serviceToken = process.env.SERVICE_TOKEN;',
+      'if (!serviceToken) throw new Error("SERVICE_TOKEN is required");',
+      "",
+      "connectToService({ token: serviceToken });",
+    ],
+    vulnerableHighlight: 0,
+    patchedHighlights: [0, 1],
+    removed: 'const serviceToken = "REDACTED_EXAMPLE_TOKEN";',
+    added: "const serviceToken = process.env.SERVICE_TOKEN;",
+  },
+] as const;
+
+type ReviewMode = "vulnerable" | "patched";
 
 export function AIPatchSimulator() {
-  const [selectedSample, setSelectedSample] = useState(0);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisLogs, setAnalysisLogs] = useState<string[]>([]);
-  const [isPatched, setIsPatched] = useState(false);
-
-  const runAIAudit = () => {
-    setIsAnalyzing(true);
-    setIsPatched(false);
-    setAnalysisLogs([]);
-
-    const sample = SAMPLE_VULNERABILITIES[selectedSample];
-
-    const logSteps = [
-      '[AST ENGINE] Parsing Abstract Syntax Tree...',
-      `[CRITICAL DETECTED] Triggered security rule: ${sample.vulnType}`,
-      '[GEMINI LLM AGENT] Initializing security patch reasoning pipeline...',
-      '[REFACTORING] Rewriting AST nodes to inject secure programming paradigms...',
-      '[VERIFICATION] Running zero-vulnerability audit test suite...',
-      '[SUCCESS] Security patch generated successfully! Product purity: 99.99%'
-    ];
-
-    logSteps.forEach((step, index) => {
-      setTimeout(() => {
-        setAnalysisLogs((prev) => [...prev, step]);
-        if (index === logSteps.length - 1) {
-          setIsAnalyzing(false);
-          setIsPatched(true);
-        }
-      }, (index + 1) * 600);
-    });
-  };
+  const [sampleIndex, setSampleIndex] = useState(0);
+  const [reviewMode, setReviewMode] = useState<ReviewMode>("vulnerable");
+  const sample = PATCH_SAMPLES[sampleIndex];
+  const lines = reviewMode === "vulnerable" ? sample.before : sample.after;
 
   return (
-    <div className="border border-emerald-500/40 bg-black/90 rounded-2xl p-6 md:p-8 font-mono text-white shadow-[0_0_35px_rgba(16,185,129,0.15)] my-12">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between md:items-center pb-4 border-b border-emerald-500/20 mb-6 gap-2">
+    <section className="rounded-2xl border border-line bg-surface/90 p-5 sm:p-7">
+      <div className="flex flex-col gap-3 border-b border-line pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <span className="text-emerald-400 text-[10px] tracking-widest uppercase">// INTERACTIVE DEMO</span>
-          <h3 className="text-xl md:text-2xl font-bold text-white">AI Agent Security Patch Engine</h3>
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
+            Static rule demo · no source execution
+          </p>
+          <h3 className="mt-2 text-lg font-semibold text-zinc-100">
+            Patch inspector
+          </h3>
+          <p className="mt-1 text-sm leading-6 text-zinc-500">
+            Compare a synthetic finding with a minimal defensive change.
+          </p>
         </div>
-        <span className="text-xs text-yellow-400 bg-yellow-950/30 border border-yellow-500/30 px-3 py-1 rounded-full self-start md:self-auto">
-          Gemini LLM + AST Integration
+        <span className="w-fit rounded-full border border-line px-3 py-1 font-mono text-[10px] text-zinc-500">
+          LOCAL ONLY
         </span>
       </div>
 
-      {/* Code Sample Selector */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {SAMPLE_VULNERABILITIES.map((sample, idx) => (
+      <div className="mt-5 flex flex-wrap gap-2" aria-label="Sample rules">
+        {PATCH_SAMPLES.map((item, index) => (
           <button
-            key={idx}
+            key={item.id}
+            type="button"
+            aria-pressed={sampleIndex === index}
             onClick={() => {
-              setSelectedSample(idx);
-              setIsPatched(false);
-              setAnalysisLogs([]);
+              setSampleIndex(index);
+              setReviewMode("vulnerable");
             }}
-            className={`px-3 py-1.5 rounded text-xs transition-all border ${
-              selectedSample === idx
-                ? 'bg-emerald-500 text-black border-emerald-400 font-bold'
-                : 'bg-black/60 text-emerald-400/80 border-emerald-500/30 hover:border-emerald-400'
+            className={`rounded-lg border px-3 py-2 text-xs transition-colors focus-visible:outline-offset-2 ${
+              sampleIndex === index
+                ? "border-accent/40 bg-accent/10 text-accent"
+                : "border-line text-zinc-400 hover:border-white/20 hover:text-zinc-100"
             }`}
           >
-            {sample.name}
+            {item.label}
           </button>
         ))}
       </div>
 
-      {/* Split Code Workbench */}
-      <div className="grid md:grid-cols-2 gap-6 mb-6">
-        {/* Source Code */}
-        <div className="bg-black/80 border border-red-500/30 rounded-xl p-4">
-          <div className="flex justify-between items-center pb-2 mb-3 border-b border-red-500/20 text-xs text-red-400 font-bold">
-            <span>// TARGET CODE (VULNERABLE)</span>
-            <span className="text-[10px] bg-red-950/40 text-red-300 px-2 py-0.5 rounded border border-red-500/30">
-              UNSECURED AST
-            </span>
-          </div>
-          <pre className="text-[11px] text-gray-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
-            {SAMPLE_VULNERABILITIES[selectedSample].code}
-          </pre>
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex gap-1 rounded-lg border border-line bg-background/70 p-1">
+          {(["vulnerable", "patched"] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              aria-pressed={reviewMode === mode}
+              onClick={() => setReviewMode(mode)}
+              className={`rounded-md px-3 py-1.5 text-xs capitalize transition-colors ${
+                reviewMode === mode
+                  ? mode === "vulnerable"
+                    ? "bg-rose-400/10 text-rose-300"
+                    : "bg-accent/10 text-accent"
+                  : "text-zinc-500 hover:text-zinc-200"
+              }`}
+            >
+              {mode}
+            </button>
+          ))}
         </div>
-
-        {/* AI Output Patch */}
-        <div className="bg-black/80 border border-emerald-500/30 rounded-xl p-4">
-          <div className="flex justify-between items-center pb-2 mb-3 border-b border-emerald-500/20 text-xs text-emerald-400 font-bold">
-            <span>// REFACTORED CODE (AI SECURED)</span>
-            <span className="text-[10px] bg-emerald-950/40 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">
-              {isPatched ? '100% SECURE' : 'AWAITING AUDIT'}
-            </span>
-          </div>
-          <pre className={`text-[11px] overflow-x-auto whitespace-pre-wrap leading-relaxed transition-opacity duration-300 ${isPatched ? 'text-emerald-300' : 'text-gray-600'}`}>
-            {isPatched ? SAMPLE_VULNERABILITIES[selectedSample].patch : '# Run AI Audit to generate secure code refactor patch...'}
-          </pre>
-        </div>
+        <span className="font-mono text-[10px] text-zinc-600">
+          SAMPLE // {sample.id.toUpperCase()}
+        </span>
       </div>
 
-      {/* Live AI Reasoning Stream */}
-      <AnimatePresence>
-        {analysisLogs.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="bg-black border border-emerald-500/30 rounded-xl p-4 text-[11px] text-emerald-400 mb-6 space-y-1.5"
+      <div className="mt-4 overflow-hidden rounded-xl border border-line bg-[#0b0d10]">
+        <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5">
+          <span className="font-mono text-[10px] text-zinc-500">
+            {reviewMode === "vulnerable" ? "SOURCE" : "PATCH"}
+          </span>
+          <span
+            className={`font-mono text-[10px] ${
+              reviewMode === "vulnerable" ? "text-rose-300" : "text-accent"
+            }`}
           >
-            <div className="text-gray-500 border-b border-emerald-500/20 pb-1 mb-2 font-bold flex justify-between">
-              <span>// GEMINI REASONING PIPELINE</span>
-              {isAnalyzing && <span className="text-yellow-400 animate-pulse">EXECUTING REFACTOR...</span>}
-            </div>
-            {analysisLogs.map((log, i) => (
-              <p key={i} className={log.includes('[CRITICAL') ? 'text-yellow-400 font-bold' : log.includes('[SUCCESS]') ? 'text-emerald-400 font-bold' : 'text-emerald-300/90'}>
-                {log}
-              </p>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {reviewMode === "vulnerable" ? "1 FINDING" : "RULE ADDRESSED"}
+          </span>
+        </div>
+        <pre
+          aria-label={`${reviewMode} code sample for ${sample.label}`}
+          className="overflow-x-auto p-4 text-xs leading-6"
+        >
+          <code>
+            {lines.map((line, index) => {
+              const isChangedLine =
+                reviewMode === "vulnerable"
+                  ? index === sample.vulnerableHighlight
+                  : sample.patchedHighlights.some(
+                      (highlight) => highlight === index
+                    );
+              let lineClass = "text-zinc-300";
+              if (isChangedLine) {
+                lineClass =
+                  reviewMode === "vulnerable"
+                    ? "bg-rose-400/10 text-rose-200"
+                    : "bg-accent/10 text-emerald-200";
+              }
+              return (
+                <span
+                  key={`${sample.id}-${reviewMode}-${index}`}
+                  className={`block min-w-max px-2 ${lineClass}`}
+                >
+                  <span aria-hidden="true" className="mr-3 text-zinc-600">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  {line || " "}
+                </span>
+              );
+            })}
+          </code>
+        </pre>
+      </div>
 
-      {/* Action Trigger Button */}
-      <button
-        onClick={runAIAudit}
-        disabled={isAnalyzing}
-        className={`w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg ${
-          isAnalyzing
-            ? 'bg-emerald-950 text-emerald-500 border border-emerald-500/30 cursor-not-allowed'
-            : 'bg-emerald-500 text-black hover:bg-emerald-400 hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]'
+      <div
+        aria-live="polite"
+        className={`mt-4 rounded-xl border p-4 ${
+          reviewMode === "vulnerable"
+            ? "border-rose-300/15 bg-rose-300/[0.04]"
+            : "border-accent/15 bg-accent/[0.04]"
         }`}
       >
-        {isAnalyzing ? 'RUNNING AST SECURITY ANALYSIS...' : 'TRIGGER AI GEMINI AUDIT & AUTO-PATCH'}
-      </button>
-    </div>
+        <p
+          className={`font-mono text-[10px] uppercase tracking-wide ${
+            reviewMode === "vulnerable" ? "text-rose-300" : "text-accent"
+          }`}
+        >
+          {reviewMode === "vulnerable" ? sample.rule : "PATCH REVIEW"}
+        </p>
+        <p className="mt-1.5 text-sm leading-6 text-zinc-400">
+          {reviewMode === "vulnerable"
+            ? sample.detail
+            : "The displayed change addresses this sample rule; review surrounding code and test behavior before adopting it."}
+        </p>
+      </div>
+
+      <details className="group mt-4 rounded-xl border border-line bg-background/50">
+        <summary className="cursor-pointer list-none px-4 py-3 text-xs font-medium text-zinc-400 marker:hidden focus-visible:outline-offset-2 group-open:border-b group-open:border-line">
+          <span aria-hidden="true" className="mr-2 text-accent">
+            +
+          </span>
+          View focused diff
+        </summary>
+        <div className="grid gap-2 p-3 sm:grid-cols-2">
+          <code className="block overflow-x-auto rounded-lg bg-rose-300/[0.06] p-3 font-mono text-[11px] leading-5 text-rose-200">
+            <span aria-hidden="true" className="mr-2 text-rose-400">
+              −
+            </span>
+            {sample.removed}
+          </code>
+          <code className="block overflow-x-auto rounded-lg bg-accent/[0.06] p-3 font-mono text-[11px] leading-5 text-emerald-200">
+            <span aria-hidden="true" className="mr-2 text-accent">
+              +
+            </span>
+            {sample.added}
+          </code>
+        </div>
+      </details>
+    </section>
   );
 }

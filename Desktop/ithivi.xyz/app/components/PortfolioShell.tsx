@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { NAV_ITEMS, PROFILE } from "./portfolio-data";
+import CommandPalette from "./CommandPalette";
 
 type PortfolioShellProps = {
   children: ReactNode;
@@ -15,6 +16,15 @@ function isCurrentRoute(pathname: string, href: string) {
     ? pathname === href
     : pathname === href || pathname.startsWith(`${href}/`);
 }
+
+const buildCommit =
+  process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ??
+  process.env.NEXT_PUBLIC_BUILD_COMMIT;
+const BUILD_LABEL = buildCommit
+  ? `BUILD // ${buildCommit.slice(0, 7)}`
+  : process.env.NODE_ENV === "development"
+    ? "DEV BUILD"
+    : "LOCAL BUILD";
 
 export default function PortfolioShell({ children }: PortfolioShellProps) {
   const pathname = usePathname();
@@ -29,10 +39,10 @@ export default function PortfolioShell({ children }: PortfolioShellProps) {
       </a>
 
       <header className="sticky top-0 z-50 border-b border-line bg-background/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 px-4 py-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-5 sm:px-6 sm:py-4 lg:px-8">
           <Link
             href="/"
-            className="inline-flex w-fit items-center gap-3 rounded-sm focus-visible:outline-offset-4"
+            className="col-start-1 row-start-1 inline-flex min-w-0 w-fit items-center gap-3 rounded-sm focus-visible:outline-offset-4"
             aria-label={`${PROFILE.handle} home`}
           >
             <span className="grid size-9 place-items-center rounded-lg border border-accent/30 bg-accent/10 font-mono text-sm font-semibold text-accent">
@@ -42,7 +52,7 @@ export default function PortfolioShell({ children }: PortfolioShellProps) {
               <span className="block text-sm font-semibold tracking-tight text-zinc-100">
                 {PROFILE.handle}
               </span>
-              <span className="block text-xs text-zinc-500">
+              <span className="hidden text-xs text-zinc-500 sm:block">
                 Software · Systems · Applied AI
               </span>
             </span>
@@ -50,7 +60,7 @@ export default function PortfolioShell({ children }: PortfolioShellProps) {
 
           <nav
             aria-label="Primary navigation"
-            className="flex flex-wrap items-center gap-1"
+            className="col-span-2 row-start-2 flex min-w-0 items-center gap-1 overflow-x-auto sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:justify-center sm:overflow-visible"
           >
             {NAV_ITEMS.map((item) => {
               const active = isCurrentRoute(pathname, item.href);
@@ -59,7 +69,7 @@ export default function PortfolioShell({ children }: PortfolioShellProps) {
                   key={item.href}
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={`rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-offset-2 ${
+                  className={`shrink-0 rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-offset-2 ${
                     active
                       ? "bg-white/8 text-accent"
                       : "text-zinc-400 hover:bg-white/5 hover:text-zinc-100"
@@ -70,6 +80,21 @@ export default function PortfolioShell({ children }: PortfolioShellProps) {
               );
             })}
           </nav>
+
+          <div className="col-start-2 row-start-1 flex items-center justify-end gap-2 sm:col-start-3">
+            <span
+              aria-label={`System online; ${BUILD_LABEL.toLowerCase()}`}
+              className="inline-flex items-center gap-2 rounded-md border border-line bg-white/[0.02] px-2.5 py-2 font-mono text-[10px] tracking-wide text-zinc-500"
+            >
+              <span className="size-1.5 rounded-full bg-accent shadow-[0_0_8px_rgba(52,211,153,0.65)]" />
+              <span className="hidden sm:inline">SYS // ONLINE</span>
+            </span>
+            <span className="hidden rounded-md border border-line px-2.5 py-2 font-mono text-[10px] tracking-wide text-zinc-500 sm:inline">
+              {BUILD_LABEL}
+            </span>
+            <CommandPalette />
+          </div>
+
         </div>
       </header>
 

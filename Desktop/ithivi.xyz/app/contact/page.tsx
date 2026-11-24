@@ -6,7 +6,7 @@ import { PROFILE } from "../components/portfolio-data";
 export default function ContactPage() {
   return (
     <div className="space-y-12">
-      <ScrollReveal>
+      <ScrollReveal sectionLabel="Contact">
         <header className="max-w-3xl space-y-4">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
             Direct channel
@@ -22,7 +22,10 @@ export default function ContactPage() {
       </ScrollReveal>
 
       <ScrollReveal delayMs={80}>
-        <section className="max-w-3xl rounded-2xl border border-line bg-surface/90 p-6 sm:p-8">
+        <section
+          data-section-sync="Email"
+          className="max-w-3xl rounded-2xl border border-line bg-surface/90 p-6 sm:p-8"
+        >
           <div className="flex items-start gap-4">
             <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-accent/20 bg-accent/5 text-accent">
               <Mail aria-hidden="true" className="size-5" />
