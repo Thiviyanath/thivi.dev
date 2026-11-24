@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
   Check,
@@ -163,6 +163,123 @@ const CREDENTIALS: CredentialItem[] = [
   },
 ];
 
+function LiveNodeBackground() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animationId = 0;
+    let width = 0;
+    let height = 0;
+    const mouse = { x: -9999, y: -9999 };
+
+    const NODE_COUNT = 44;
+    const nodes = Array.from({ length: NODE_COUNT }, () => ({
+      x: Math.random() * 1200,
+      y: Math.random() * 800,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+    }));
+
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      canvas.width = Math.max(1, Math.floor(width * dpr));
+      canvas.height = Math.max(1, Math.floor(height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      for (const n of nodes) {
+        if (n.x > width) n.x = Math.random() * width;
+        if (n.y > height) n.y = Math.random() * height;
+      }
+    };
+
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      for (const n of nodes) {
+        n.x += n.vx;
+        n.y += n.vy;
+
+        if (n.x < 0 || n.x > width) n.vx *= -1;
+        if (n.y < 0 || n.y > height) n.vy *= -1;
+
+        const dx = n.x - mouse.x;
+        const dy = n.y - mouse.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 0 && dist < 120) {
+          n.x += (dx / dist) * 0.45;
+          n.y += (dy / dist) * 0.45;
+        }
+      }
+
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i];
+          const b = nodes[j];
+          const dist = Math.hypot(a.x - b.x, a.y - b.y);
+          if (dist < 130) {
+            const alpha = 0.14 * (1 - dist / 130);
+            ctx.strokeStyle = `rgba(15, 118, 110, ${alpha.toFixed(3)})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      for (const n of nodes) {
+        ctx.fillStyle = "rgba(15, 118, 110, 0.35)";
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 1.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      animationId = requestAnimationFrame(render);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    };
+
+    resize();
+    render();
+
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-0 h-full w-full opacity-70"
+    />
+  );
+}
+
 export default function HomePage() {
   const [selectedDomain, setSelectedDomain] = useState<string>("All");
   const [query, setQuery] = useState<string>("");
@@ -198,15 +315,17 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-[#18181B] antialiased selection:bg-[#18181B] selection:text-[#FAF9F6]">
+    <div className="relative min-h-screen bg-[#FAF9F6] text-[#18181B] antialiased selection:bg-[#18181B] selection:text-[#FAF9F6]">
+      <LiveNodeBackground />
+
       {/* Top Bar */}
-      <header className="sticky top-0 z-30 border-b border-zinc-200/90 bg-[#FAF9F6]/90 backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b border-zinc-200/90 bg-[#FAF9F6]/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
           <a
             href="#top"
             className="flex items-center gap-2.5 text-sm font-semibold tracking-tight text-zinc-900"
           >
-            <span className="inline-block h-2 w-2 rounded-full bg-emerald-600" />
+            <span className="inline-block h-2 w-2 rounded-full bg-teal-700" />
             <span>{PROFILE.name}</span>
             <span className="hidden text-zinc-400 sm:inline">/</span>
             <span className="hidden font-mono text-xs text-zinc-500 sm:inline">
@@ -226,7 +345,7 @@ export default function HomePage() {
             </a>
             <a
               href="#contact"
-              className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-900 hover:border-zinc-900 transition-colors"
+              className="rounded-md border border-zinc-300 bg-white/90 px-3 py-1.5 text-xs font-medium text-zinc-900 hover:border-zinc-900 transition-colors"
             >
               Contact
             </a>
@@ -234,11 +353,11 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main id="top" className="mx-auto max-w-5xl px-6 py-14 sm:py-20 space-y-20">
+      <main id="top" className="relative z-10 mx-auto max-w-5xl px-6 py-14 sm:py-20 space-y-20">
         {/* Hero / Intro */}
         <section className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start">
           <div className="space-y-6 lg:col-span-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs text-zinc-600">
+            <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/90 px-3 py-1 text-xs text-zinc-600 backdrop-blur-sm">
               <MapPin className="h-3.5 w-3.5 text-zinc-500" />
               <span>{PROFILE.location}</span>
               <span className="text-zinc-300">•</span>
@@ -265,7 +384,7 @@ export default function HomePage() {
                 href={PROFILE.github}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-800 hover:border-zinc-900 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-md border border-zinc-300 bg-white/90 px-4 py-2.5 text-sm font-medium text-zinc-800 hover:border-zinc-900 transition-colors"
               >
                 <span>GitHub</span>
                 <ArrowUpRight className="h-4 w-4" />
@@ -273,11 +392,11 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={handleCopyEmail}
-                className="inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-800 hover:border-zinc-900 transition-colors"
+                className="inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-white/90 px-4 py-2.5 text-sm font-medium text-zinc-800 hover:border-zinc-900 transition-colors"
               >
                 {copiedEmail ? (
                   <>
-                    <Check className="h-4 w-4 text-emerald-600" />
+                    <Check className="h-4 w-4 text-teal-700" />
                     <span>Email Copied</span>
                   </>
                 ) : (
@@ -292,7 +411,7 @@ export default function HomePage() {
 
           {/* Right Column: Profile Photo + Current Focus */}
           <aside className="space-y-5 lg:col-span-4">
-            <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white p-2">
+            <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white/95 p-2 backdrop-blur-sm">
               <img
                 src="/profile.jpg"
                 alt={PROFILE.name}
@@ -300,11 +419,11 @@ export default function HomePage() {
               />
               <div className="flex items-center justify-between px-2 pt-2.5 pb-1 text-xs text-zinc-500">
                 <span className="font-medium text-zinc-800">{PROFILE.name}</span>
-                <span className="font-mono">public/profile.jpg</span>
+                <span>{PROFILE.location}</span>
               </div>
             </div>
 
-            <div className="rounded-xl border border-zinc-200 bg-white p-5 space-y-3">
+            <div className="rounded-xl border border-zinc-200 bg-white/95 p-5 space-y-3 backdrop-blur-sm">
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
                 <Terminal className="h-3.5 w-3.5" />
                 <span>Currently Focusing On</span>
@@ -312,7 +431,7 @@ export default function HomePage() {
               <ul className="space-y-2.5 text-sm text-zinc-700">
                 {PROFILE.now.map((item, idx) => (
                   <li key={idx} className="flex items-start gap-2.5">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400" />
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-700/70" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -321,7 +440,7 @@ export default function HomePage() {
           </aside>
         </section>
 
-        <hr className="border-zinc-200" />
+        <hr className="relative z-10 border-zinc-200" />
 
         {/* Projects / Case Notes */}
         <section id="work" className="space-y-8">
@@ -343,7 +462,7 @@ export default function HomePage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Filter by stack or keyword..."
-                className="w-full rounded-md border border-zinc-300 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none"
+                className="w-full rounded-md border border-zinc-300 bg-white/95 py-2 pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none"
               />
             </div>
           </div>
@@ -360,7 +479,7 @@ export default function HomePage() {
                   className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                     active
                       ? "bg-zinc-900 text-white"
-                      : "border border-zinc-200 bg-white text-zinc-700 hover:border-zinc-400"
+                      : "border border-zinc-200 bg-white/90 text-zinc-700 hover:border-zinc-400"
                   }`}
                 >
                   {domain}
@@ -374,7 +493,7 @@ export default function HomePage() {
             {filteredProjects.map((project) => (
               <article
                 key={project.id}
-                className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-6 transition-colors hover:border-zinc-400"
+                className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white/95 p-6 backdrop-blur-sm transition-colors hover:border-zinc-400"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-xs text-zinc-500">
@@ -392,7 +511,7 @@ export default function HomePage() {
                     {project.summary}
                   </p>
 
-                  <div className="space-y-2.5 rounded-lg border border-zinc-100 bg-[#FAF9F6] p-4 text-xs leading-relaxed">
+                  <div className="space-y-2.5 rounded-lg border border-zinc-100 bg-[#FAF9F6]/90 p-4 text-xs leading-relaxed">
                     <div>
                       <span className="font-semibold text-zinc-900">
                         Key Trade-off:{" "}
@@ -450,7 +569,7 @@ export default function HomePage() {
           </div>
 
           {filteredProjects.length === 0 && (
-            <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-sm text-zinc-500">
+            <div className="rounded-xl border border-dashed border-zinc-300 bg-white/90 p-8 text-center text-sm text-zinc-500">
               No projects match that filter.{" "}
               <button
                 type="button"
@@ -466,7 +585,7 @@ export default function HomePage() {
           )}
         </section>
 
-        <hr className="border-zinc-200" />
+        <hr className="relative z-10 border-zinc-200" />
 
         {/* Stack & How I Use It */}
         <section id="stack" className="space-y-8">
@@ -483,7 +602,7 @@ export default function HomePage() {
             {STACK_GROUPS.map((group, index) => (
               <div
                 key={group.label}
-                className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4"
+                className="rounded-xl border border-zinc-200 bg-white/95 p-6 space-y-4 backdrop-blur-sm"
               >
                 <div className="flex items-center gap-2 text-sm font-semibold text-zinc-950">
                   {index === 0 && <Layers className="h-4 w-4 text-zinc-600" />}
@@ -511,7 +630,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <hr className="border-zinc-200" />
+        <hr className="relative z-10 border-zinc-200" />
 
         {/* Background & Credentials */}
         <section id="about" className="space-y-8">
@@ -526,7 +645,7 @@ export default function HomePage() {
             {CREDENTIALS.map((cred) => (
               <div
                 key={cred.title}
-                className="rounded-xl border border-zinc-200 bg-white p-5 space-y-2"
+                className="rounded-xl border border-zinc-200 bg-white/95 p-5 space-y-2 backdrop-blur-sm"
               >
                 <div className="flex items-center justify-between gap-2 text-xs text-zinc-500">
                   <span>{cred.organization}</span>
@@ -546,7 +665,7 @@ export default function HomePage() {
         {/* Contact */}
         <section
           id="contact"
-          className="rounded-2xl border border-zinc-200 bg-white p-8 sm:p-10"
+          className="rounded-2xl border border-zinc-200 bg-white/95 p-8 sm:p-10 backdrop-blur-sm"
         >
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
             <div className="space-y-2 max-w-xl">
@@ -585,7 +704,7 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-200 py-8 text-xs text-zinc-500">
+      <footer className="relative z-10 border-t border-zinc-200 bg-[#FAF9F6]/85 py-8 text-xs text-zinc-500 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-6 sm:flex-row">
           <span>
             {PROFILE.name} — {PROFILE.handle}
