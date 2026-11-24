@@ -1,8 +1,23 @@
-import './globals.css';
+import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
+import "./globals.css";
 
-export const metadata = {
-  title: 'Thiviyanath M. | Software Engineer & Full Stack Developer',
-  description: 'Portfolio of Thiviyanath Maheswaran - Full Stack Developer & DevOps Specialist',
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "Thiviyanath M. | Software Engineer & Full Stack Developer",
+  description:
+    "Portfolio of Thiviyanath Maheswaran — Full-Stack, Applied AI & Systems Engineering",
 };
 
 export default function RootLayout({
@@ -11,9 +26,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-black text-white">
-      <body className="font-mono bg-black text-white selection:bg-emerald-500 selection:text-black">
-        <main>{children}</main>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="font-sans antialiased bg-[#FAF9F6] text-[#18181B]">
+        {children}
       </body>
     </html>
   );
